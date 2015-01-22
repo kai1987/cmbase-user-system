@@ -17,7 +17,7 @@ notifier =
 
 module.exports =
   development:
-    db: 'mongodb://localhost/cmbase_dev',
+    db: 'mongodb://192.168.1.119/cmbase_dev',
     root: rootPath,
     notifier: notifier,
     app:

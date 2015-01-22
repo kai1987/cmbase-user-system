@@ -114,7 +114,7 @@ exports.show = (req, res)->
     return next(new Error('Failed to load User ' + id)) unless user?
 
     res.render 'users/show',
-      title: user.name,
+      title: user.username,
       user: user
     return
   return

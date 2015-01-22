@@ -37,6 +37,8 @@ require('./config/express')(app, config, passport)
 # Bootstrap routes
 require('./config/routes')(app, passport, auth)
 
+app.route('/test').get (req,res,next)->res.send "hahahhah"
+console.log "add test router"
 # Start the app by listening on <port>
 port = process.env.PORT || 3000
 app.listen(port)
