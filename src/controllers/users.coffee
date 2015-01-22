@@ -3,6 +3,7 @@
 
 mongoose = require('mongoose')
 User = mongoose.model('User')
+Device= mongoose.model('Device')
 
 exports.signin = (req, res)->
 
@@ -44,44 +45,29 @@ exports.create = (req, res, next)->
   newUser = new User(req.body)
   newUser.provider = 'local'
 
-  User.findOne({ username: newUser.username}).exec (err, user)->
-    return next(err) if err?
-    unless user?
-      newUser.save (err)->
-        if err?
-          if req.speak_as is "json"
-            next(new EvalError(String(err)))
-            #res.json
-              #error: String(err)
-              #success: false
-          else
-            res.render 'users/signup',
-              errors: err.errors
-              user:newUser
-          return
-
-        req.logIn newUser, (err)->
-          return next err if err?
-
-          if req.speak_as is "json"
-            res.json
-              id : newUser.id
-              success: true
-          else
-            return res.redirect('/')
-
-        return
-    else
+  newUser.save (err)->
+    if err?
       if req.speak_as is "json"
-        next(new EvalError("用户名已存在"))
+        next(new EvalError(String(err)))
         #res.json
-          #error: "用户名已存在"
+          #error: String(err)
           #success: false
       else
         res.render 'users/signup',
-          errors: [{"type":"username already registered"}]
+          errors: err.errors
           user:newUser
       return
+
+    req.logIn newUser, (err)->
+      return next err if err?
+
+      if req.speak_as is "json"
+        res.json
+          id : newUser.id
+          success: true
+      else
+        return res.redirect('/')
+
     return
   return
 
@@ -129,5 +115,76 @@ exports.user = (req, res, next, id)->
     return
   return
 
+##udid登录，如果是具名用户，返回客户端让客户端登录
+exports.udidlogin=(req,res,next)->
+  user = req.user
+  unless user?
+    res.json
+      success:false
+      errors:"Unknown error,why user is null"
+    return
+  unless user.anonymous
+    res.json
+      success:false
+      errors:"unanonymous"
+      username:user.username
+    return
+  res.json
+    id:user.id
+    success:true
+  return
+
+##udid将匿名用户注册
+exports.udidbind = (req,res,next)->
+  {username,password} = req.body
+  user = req.user
+  unless user?
+    res.json
+      success:false
+      errors:"Unknown error,why user is null"
+    return
+  #已经绑定到用户了,返回使用账号登录
+  unless user.anonymous
+    res.json
+      success:false
+      errors:"unanonymous"
+      username:user.username
+    return
+
+  user.username=username
+  user.password=password
+  user.anonymous=false
+  user.save (err)->
+    if err?
+      res.json
+        success:false
+        errors:err
+      return
+    res.json
+      success:true
+  return
+
+exports.passwordLogin=(req,res,next)->
+  {client_id} = req.body
+  user = req.user
+  #茂名用户不能登录，以防万一。
+  if user.anonymous
+    res.json
+      success:false
+      errors:'this is anonymous user'
+    return
+  res.json({id:req.user.id, success:true})
+  #device绑定不是必须的
+  if client_id?
+    Device.findOne {udid:client_id},(err,device)->
+      return if err
+      return if device and device.user_id is user.id
+      if device?
+        device.user_id = user.id
+        device.save()
+        return
+      device = new Device({udid:client_id,user_id:user.id})
+      device.save()
+  return
 
 

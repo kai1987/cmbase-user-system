@@ -13,11 +13,15 @@ module.exports = (app, passport, auth)->
   router.post '/api/signup', ((req, res, next)-> (req.speak_as = "json") && next()), users.create
 
   router.post '/users/session', passport.authenticate('local', {failureRedirect: '/login', failureFlash: '无效的用户名或者密码.'}), users.session
-  router.post '/api/login', passport.authenticate('local', { session: false }), (req, res)-> res.json({id:req.user.id, success:true})
+  router.post '/api/login', passport.authenticate('local', { session: false }),users.passwordLogin
 
   router.post '/api/change_password', passport.authenticate('local', { session: false }), ((req, res, next)-> (req.speak_as = "json") && next()), users.changePassword
 
   router.get '/users/:userId', users.show
+
+  router.post '/api/udidlogin',passport.authenticate('oauth2-public-client',{session:false}),users.udidlogin
+
+  router.post '/api/udidbind',passport.authenticate('oauth2-public-client',{session:false}),users.udidbind
 
   # this is home page
   home = require "../controllers/home"

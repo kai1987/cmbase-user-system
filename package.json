@@ -35,10 +35,13 @@
     "jade": "latest",
     "method-override": "^2.3.1",
     "mongoose": "latest",
+    "mongoose-times": "^0.1.0",
     "morgan": "^1.5.1",
     "passport": ">=0.1.17",
     "passport-local": "latest",
+    "passport-oauth2-public-client": "^0.1.0",
     "response-time": "^2.2.0",
+    "shortid": "^2.1.3",
     "underscore": "latest",
     "view-helpers": "latest"
   },
