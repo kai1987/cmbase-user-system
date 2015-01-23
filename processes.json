@@ -1,0 +1,35 @@
+{
+  /**
+   * This is a sample configuration file for PM2
+   */
+
+  /**
+   * Here we declare the apps that must be managed by PM2
+   * All options are listed here:
+   * https://github.com/Unitech/PM2/blob/master/ADVANCED_README.md#json-app-declaration
+   *
+   */
+  apps : [
+
+    // First application
+    {
+      name      : "cmbase",
+      script    : "lib/server.js",
+      env: {
+        COMMON_VARIABLE: "true",
+        PORT:3010
+      },
+      env_production : {
+        NODE_ENV: "production"
+
+      }
+    },
+
+    // Second application
+    {
+      name      : "WEB",
+      script    : "web.js"
+    }
+
+  ]
+}
