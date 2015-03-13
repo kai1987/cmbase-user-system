@@ -33,7 +33,7 @@ module.exports = (passport, config)->
 
 
   publicClientStrategyCallback = (udid,done)->
-    #console.log "passport:publicClientStrategyCallback:udid:#{udid}"
+    console.log "passport:publicClientStrategyCallback:udid:#{udid}"
     User.findOrCreateByUdid udid,(err,user)->
       return done(err) if err
       return done(null,false,{message:'Unknown user'}) unless user
