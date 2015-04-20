@@ -29,7 +29,7 @@ module.exports =
     app:
       name: 'CMBase user system'
   production:
-    db: 'mongodb://localhost/cmbase_prod',
+    db: 'mongodb://localhost/cmbase_mc',
     root: rootPath,
     notifier: notifier,
     app:
